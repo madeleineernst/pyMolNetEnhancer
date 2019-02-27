@@ -111,7 +111,7 @@ def highestscore(a, chem_dic, score):
             num = char[1]/score[index]
         if not chem_sums[index]:
             char = ["no matches","no matches"]
-            num = 0.0
+            num = ""
         chem_finalscore.append([char[0],num])
     
     return chem_finalscore
