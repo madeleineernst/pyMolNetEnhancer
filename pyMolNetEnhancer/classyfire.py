@@ -5,6 +5,67 @@ Created on Mon Aug 13 16:19:11 2018
 
 @author: madeleineernst
 """
+import collections
+from collections import OrderedDict
+import pandas as pd
+pd.options.mode.chained_assignment = None 
+
+def Mass2Motif_2_Network(edges,motifs,prob = 0.01,overlap = 0.3, top = 5):
+    
+    motifs = motifs[motifs.probability > prob]
+    motifs = motifs[motifs.overlap > overlap]
+    
+    motifs_con = motifs.groupby('scans').agg(lambda x: x.tolist())
+    df = pd.DataFrame(0.0, index=motifs_con.index, columns=motifs.motif.unique())
+    
+    for index, row in motifs_con.iterrows():
+        for idx, val in enumerate(row["motif"]):
+            df.loc[index][val] = row["overlap"][idx]
+    
+    comb = pd.merge(motifs_con, df, left_index= True, right_index=True)
+    
+    edges['shared_motifs'] = 'None'
+
+    for index, row in edges.iterrows():
+        if row['CLUSTERID1'] in motifs_con.index and row['CLUSTERID2'] in motifs_con.index:
+            edges['shared_motifs'].iloc[index] = list(set(motifs_con.loc[row['CLUSTERID1'],'motif']) & set(motifs_con.loc[row['CLUSTERID2'],'motif']))
+
+    # calculate most shared motifs per molecular family
+    topmotifs = edges.groupby('ComponentIndex')['shared_motifs'].agg(lambda x: x.tolist()).to_frame(name='topmotifs')
+
+    for index,row in topmotifs.iterrows():
+        if row['topmotifs'] != ['None']:
+            mcounts = list(filter(lambda a: a != 'None', row['topmotifs']))
+            topmotifs.loc[index,'topmotifs'] = [x for sub_list in mcounts for x in sub_list]
+
+    for index,row in topmotifs.iterrows():
+        counts = collections.Counter(row['topmotifs'])
+        mcs = sorted(row['topmotifs'], key=counts.get, reverse=True)
+        row['topmotifs'] = list(OrderedDict.fromkeys(mcs))[0:top]
+
+    topmotifs['ComponentIndex'] = topmotifs.index
+
+    edges['TopSharedMotifs'] = edges['ComponentIndex'].map(topmotifs.set_index('ComponentIndex')['topmotifs'])
+
+    # add separate edge for each shared motif
+    edges.insert(loc=1, column='interaction', value= 'cosine')
+
+    cols = edges.columns
+    lst = []
+
+    for index, row in edges.iterrows():
+        if row['shared_motifs'] != 'None':
+            #print(row['shared_motifs'])
+            for idx,val in enumerate(row['shared_motifs']):
+                #print(row['shared_motifs'][idx])
+                lst.append([row['CLUSTERID1'],row['shared_motifs'][idx],row['CLUSTERID2'], 
+                        row['DeltaMZ'], row['MEH'], row['Cosine'], row['OtherScore'],row['ComponentIndex'],row['shared_motifs'], row['TopSharedMotifs']])
+
+    motifedges = pd.DataFrame(lst, columns=cols)
+    edges = edges.append(motifedges)
+    
+    return {'nodes':comb,'edges':edges}
+
 import csv  
 import json
 import pandas as pd
@@ -208,8 +269,86 @@ def molfam_classes(net, df, smilesdict):
     final = pd.merge(net[['componentindex','cluster index']], sumary, on='componentindex')
     # make cluster index first column
     final = final[['cluster index','componentindex','CF_NrNodes','CF_kingdom','CF_kingdom_score','CF_superclass','CF_superclass_score','CF_class','CF_class_score','CF_subclass','CF_subclass_score','CF_Dparent','CF_Dparent_score','CF_MFramework','CF_MFramework_score']]
+    final = final.rename(columns = {'componentindex':'CF_componentindex'})
     
     return final
+    
+from networkx import *
+    
+def make_classyfire_graphml(graphML,final):
+
+    for v in graphML.nodes():  
+
+        graphML.node[v]['CF_componentindex']= str(final[final['cluster index'] == int(v)]['CF_componentindex'].iloc[-1])
+        graphML.node[v]['CF_NrNodes']= float(final[final['cluster index'] == int(v)]['CF_NrNodes'].iloc[-1])
+        graphML.node[v]['CF_kingdom']= str(final[final['cluster index'] == int(v)]['CF_kingdom'].iloc[-1])
+
+        try:
+            graphML.node[v]['CF_kingdom_score']= float(final[final['cluster index'] == int(v)]['CF_kingdom_score'].iloc[-1])
+        except:
+            graphML.node[v]['CF_kingdom_score']= object()
+
+        graphML.node[v]['CF_superclass']= str(final[final['cluster index'] == int(v)]['CF_superclass'].iloc[-1])
+
+        try:
+            graphML.node[v]['CF_superclass_score']= float(final[final['cluster index'] == int(v)]['CF_superclass_score'].iloc[-1])
+        except:
+            graphML.node[v]['CF_superclass_score']= object()
+
+        graphML.node[v]['CF_class']= str(final[final['cluster index'] == int(v)]['CF_class'].iloc[-1])
+
+        try:
+            graphML.node[v]['CF_class_score']= float(final[final['cluster index'] == int(v)]['CF_class_score'].iloc[-1])
+        except:
+            graphML.node[v]['CF_class_score']= object()
+
+        graphML.node[v]['CF_subclass']= str(final[final['cluster index'] == int(v)]['CF_subclass'].iloc[-1])
+
+        try:
+            graphML.node[v]['CF_subclass_score']= float(final[final['cluster index'] == int(v)]['CF_subclass_score'].iloc[-1])
+        except:
+            graphML.node[v]['CF_subclass_score']= object()
+
+        graphML.node[v]['CF_Dparent']= str(final[final['cluster index'] == int(v)]['CF_Dparent'].iloc[-1])
+
+        try:
+            graphML.node[v]['CF_Dparent_score']= float(final[final['cluster index'] == int(v)]['CF_Dparent_score'].iloc[-1])
+        except:
+            graphML.node[v]['CF_Dparent_score']= object()
+
+        graphML.node[v]['CF_MFramework']= str(final[final['cluster index'] == int(v)]['CF_MFramework'].iloc[-1])
+
+        try:
+            graphML.node[v]['CF_MFramework_score']= float(final[final['cluster index'] == int(v)]['CF_MFramework_score'].iloc[-1])
+        except ValueError:
+            graphML.node[v]['CF_MFramework_score']= object()
+        
+    return graphML
+    
+def make_motif_graphml(graphML,nodes, edges):
+    
+    # convert lists to strings
+    edges['shared_motifs'] = edges['shared_motifs'].replace('None', '')
+    edges['TopSharedMotifs'] = edges['TopSharedMotifs'].replace('None', '')
+    edges['shared_motifs'] = edges['shared_motifs'].agg(lambda x: ','.join(map(str, x)))
+    edges['TopSharedMotifs'] = edges['TopSharedMotifs'].agg(lambda x: ','.join(map(str, x)))
+    
+    # create motif network with multiple edges
+    MG = nx.from_pandas_edgelist(edges, 'CLUSTERID1', 'CLUSTERID2', edge_attr=list(set(list(edges.columns)) - set(['CLUSTERID1','CLUSTERID2'])), 
+                             create_using=nx.MultiGraph())
+    
+    # map node attributes to network
+    nodes['precursormass'] = nodes['precursormass'].agg(lambda x: ','.join(map(str, x)))
+    nodes['parentrt'] = nodes['parentrt'].agg(lambda x: ','.join(map(str, x)))
+    nodes['document'] = nodes['document'].agg(lambda x: ','.join(map(str, x)))
+    nodes['motif'] = nodes['motif'].agg(lambda x: ','.join(map(str, x)))
+    nodes['probability'] = nodes['probability'].agg(lambda x: ','.join(map(str, x)))
+    nodes['overlap'] = nodes['overlap'].agg(lambda x: ','.join(map(str, x)))
+    
+    for column in nodes:
+        nx.set_node_attributes(MG, pd.Series(nodes[column], index=nodes.index).to_dict(), column)
+        
+    return MG
     
 """
 @author: Ricardo Silva (https://github.com/rsilvabioinfo)
