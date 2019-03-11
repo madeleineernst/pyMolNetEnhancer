@@ -48,7 +48,7 @@ To visualize results import the .graphml output file into [Cytoscape](https://cy
 <img src="IMG/MotifsMappedEdges.png"/>
 
 To color nodes by the most shared Mass2Motifs per molecular family (network component index) select 'Image/Chart' in the 'Node' tab to the left and select Mass2Motifs shown in 'TopSharedMotifs' in the Edge Table:
-<img src="IMG/IMG/MotifsMappedNodes.jpg"/>
+<img src="IMG/MotifsMappedNodes.jpg"/>
 
 
 ## Map MS2LDA substructural information to mass spectral molecular networks (feature based) <a name="Mass2Motifs_to_Network_FeatureBased"></a>
@@ -81,7 +81,7 @@ To visualize results import the .graphml output file into [Cytoscape](https://cy
 <img src="IMG/MotifsMappedEdges.png"/>
 
 To color nodes by the most shared Mass2Motifs per molecular family (network component index) select 'Image/Chart' in the 'Node' tab to the left and select Mass2Motifs shown in 'TopSharedMotifs' in the Edge Table:
-<img src="IMG/IMG/MotifsMappedNodes.jpg"/>
+<img src="IMG/MotifsMappedNodes.jpg"/>
 
 
 ## Map chemical class information to mass spectral molecular networks <a name="ChemicalClasses_to_Network"></a>
