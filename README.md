@@ -44,7 +44,9 @@ The only things you need to specify are:
 </li>
 </ol>
 
-To visualize results import the .graphml output file into [Cytoscape](https://cytoscape.org/).
+To visualize results import the .graphml output file into [Cytoscape](https://cytoscape.org/). To color edges based on shared Mass2Motifs in between nodes select 'Stroke Color' in the 'Edge' tab to the left and choose 'interaction' as <i>Column</i> and 'Discrete Mapping' as <i>Mapping Type</i>:
+<img src="IMG/MotifsMappedEdges.png"/>
+
 
 ## Map MS2LDA substructural information to mass spectral molecular networks (feature based) <a name="Mass2Motifs_to_Network_FeatureBased"></a>
 
@@ -71,6 +73,9 @@ The only things you need to specify are:
   <tt>top</tt>: This parameter specifies how many most shared motifs per molecular family (network component index) should be shown. Default is 5.
 </li>
 </ol>
+
+To visualize results import the .graphml output file into [Cytoscape](https://cytoscape.org/). To color edges based on shared Mass2Motifs in between nodes select 'Stroke Color' in the 'Edge' tab to the left and choose 'interaction' as <i>Column</i> and 'Discrete Mapping' as <i>Mapping Type</i>:
+<img src="IMG/MotifsMappedEdges.png"/>
 
 ## Map chemical class information to mass spectral molecular networks <a name="ChemicalClasses_to_Network"></a>
 
