@@ -44,6 +44,8 @@ The only things you need to specify are:
 </li>
 </ol>
 
+To visualize results import the .graphml output file into [Cytoscape](https://cytoscape.org/).
+
 ## Map MS2LDA substructural information to mass spectral molecular networks (feature based) <a name="Mass2Motifs_to_Network_FeatureBased"></a>
 
 In order to map substructural information to a mass spectral molecular network created through the feature based workflow you need to:
@@ -101,7 +103,9 @@ In this notebook we use [ChemAxon's molconvert](https://docs.chemaxon.com/displa
 path = '/Applications/MarvinSuite/bin/'
 os.environ['PATH'] += ':'+path
 ```
- 
+
+To visualize results import the .graphml output file into [Cytoscape](https://cytoscape.org/). To color nodes based on the chemical subclass select 'Fill Color' in the 'Node' tab to the left, choose 'CF_subclass' as <i>Column</i> and 'Discrete Mapping' as <i>Mapping Type</i>:
+<img src="IMG/ChemicalClassesMapped.png"/>
 
 
 
