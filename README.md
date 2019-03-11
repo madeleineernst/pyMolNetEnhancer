@@ -1,5 +1,7 @@
 # pyMolNetEnhancer
 
+pyMolNetEnhancer is a python module integrating chemical class and substructure information within mass spectral molecular networks created through the [Global Natural Products Social Molecular Networking (GNPS)](https://gnps.ucsd.edu/) platform.
+
 ### Table of contents
 
 * [Install](#install)
