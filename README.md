@@ -91,9 +91,18 @@ The only things you need to specify are:
 </ol>
 
 You can specify as many <i>in silico</i> annotation outputs as you wish. If you import results from applications different than NAP or DEREPLICATOR make sure that your input file is tab separated and includes a column named 'Scan' containing numeric identifiers matching the numeric node identifiers in the GNPS network and a column named 'SMILES' containing SMILES structures.
-Make sure that you include all results as dataframe list items in the 'matches' object. The object 'gnpslib' contains all GNPS library hits.
+Make sure that you include all results as dataframe list items in the 'matches' object. The object 'gnpslib' contains all GNPS library hits:
 
  `matches = [gnpslib, nap, derep]`
+ 
+In this notebook we use [ChemAxon's molconvert](https://docs.chemaxon.com/display/docs/Molconvert) to convert SMILES to InChIKeys. Make sure to have molconvert installed and add the path to the environment:
+ 
+```
+path = '/Applications/MarvinSuite/bin/'
+os.environ['PATH'] += ':'+path
+```
+ 
+
 
 
 ## Dependencies
