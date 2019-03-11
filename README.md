@@ -28,9 +28,9 @@ The only things you need to specify are:
 <ol>
   <li>Your GNPS job ID 
   <img src="IMG/GNPSJobID.png"/></li>
-  <li>The MS2LDA job ID
+  <li>Your MS2LDA job ID
   <img src="IMG/MS2LDAJobID.png"/>
-  <b>Note</b>: Depending on the size of this file, a server connection timeout may occur. Alternatively, you may download the file manually at [http://ms2lda.org/](http://ms2lda.org/): <br>
+  <b>Note</b>: Depending on the size of this file, a server connection timeout may occur. Alternatively, you may download the file manually at http://ms2lda.org/: <br>
   <img src="IMG/Export_MS2LDA_Summary.jpg"/></li>
   <li>User-defined parameters for mapping the Mass2Motifs onto the network
   <img src="IMG/Mass2Motif_2_Network_Parameters.png"/>
