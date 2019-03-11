@@ -27,10 +27,10 @@ The only things you need to specify are:
   <li>User-defined parameters for mapping the Mass2Motifs onto the network
   <img src="IMG/Mass2Motif_2_Network_Parameters.png"/>
   where <br>
-  ``prob``: minimal probability score for a Mass2Motif to be included. Default is 0.01. <br>
-  ``overlap``: minimal overlap score for a Mass2Motif to be included. Default is 0.3. <br>
-   <b>Important<\b>: The probability and overlap thresholds can be set within the ms2lda.org app as well under the Experimental Options tab. It is recommendable to do so when inspecting results in the web app. Importantly, the summary table contains filtered motif-document relations using the set thresholds in the web app. <br>
-  ``top``: This parameter specifies how many most shared motifs per molecular family (network component index) should be shown. Default is 5.
+  <tt>prob</tt>: minimal probability score for a Mass2Motif to be included. Default is 0.01. <br>
+  <tt>overlap</tt>: minimal overlap score for a Mass2Motif to be included. Default is 0.3. <br>
+   <b>Important</b>: The probability and overlap thresholds can be set within the ms2lda.org app as well under the Experimental Options tab. It is recommendable to do so when inspecting results in the web app. Importantly, the summary table contains filtered motif-document relations using the set thresholds in the web app. <br>
+  <tt>top</tt>: This parameter specifies how many most shared motifs per molecular family (network component index) should be shown. Default is 5.
 </li>
 </ol>
  
