@@ -67,6 +67,10 @@ The only things you need to specify are:
   <tt>top</tt>: This parameter specifies how many most shared motifs per molecular family (network component index) should be shown. Default is 5.
 </li>
 </ol>
+
+## Dependencies
+
+python 3.6.5, collections 0.6.1, csv 1.0, functools, joblib 0.13.0, json 2.0.9, multiprocessing, networkx 2.1, operator, os, pandas 0.22.0, rdkit, re 2.2.1, requests 2.18.4, sys, time
  
 ## Licence
 This repository is available under the following licence https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/LICENSE
