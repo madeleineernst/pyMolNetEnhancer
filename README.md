@@ -26,7 +26,7 @@ In order to map substructural information to a mass spectral molecular network y
 
 <img src="IMG/DownloadCulsteredMGF.png"/>
 
-Then execute the code in [Example_notebooks/Mass2Motifs_2_Network_Classicaly.ipynb](https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/Example_notebooks/Mass2Motifs_2_Network_Classical.ipynb) line by line.
+Then execute the code in [Example_notebooks/Mass2Motifs_2_Network_Classical.ipynb](https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/Example_notebooks/Mass2Motifs_2_Network_Classical.ipynb) line by line.
 The only things you need to specify are:
 
 <ol>
@@ -135,7 +135,7 @@ graphML_classy = make_classyfire_graphml(MG,final)
 nx.write_graphml(graphML_classy, "Motif_ChemicalClass_Network_Classical.graphml", infer_numeric_types = True)
 ```
 
-where 'MG' corresponds to the Mass2Motif network and 'final' to the dataframe output created when mapping chemical class information. For an example see [Example_notebooks/Mass2Motifs_2_Network_Classicaly.ipynb](https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/Example_notebooks/Mass2Motifs_2_Network_Classical.ipynb). To visualize the network in Cytoscape proceed as described in [mapping MS2LDA substructural information using the classical](#Mass2Motifs_to_Network_Classical) or
+where 'MG' corresponds to the Mass2Motif network and 'final' to the dataframe output created when mapping chemical class information. For an example see [Example_notebooks/Mass2Motifs_2_Network_Classical.ipynb](https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/Example_notebooks/Mass2Motifs_2_Network_Classical.ipynb). To visualize the network in Cytoscape proceed as described in [mapping MS2LDA substructural information using the classical](#Mass2Motifs_to_Network_Classical) or
 [feature based](#Mass2Motifs_to_Network_FeatureBased) workflow and [mapping chemical class information to mass spectral molecular networks](#ChemicalClasses_to_Network). 
 
 ## Dependencies
