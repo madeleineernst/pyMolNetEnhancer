@@ -4,7 +4,7 @@ pyMolNetEnhancer is a python module integrating chemical class and substructure 
 
 ### Table of contents
 
-* [Install](#install)
+* [Installation](#installation)
 * [Map MS2LDA substructural information to mass spectral molecular networks (classical)](#Mass2Motifs_to_Network_Classical)
 * [Map MS2LDA substructural information to mass spectral molecular networks (feature based)](#Mass2Motifs_to_Network_FeatureBased)
 * [Map chemical class information to mass spectral molecular networks](#ChemicalClasses_to_Network)
@@ -14,9 +14,9 @@ pyMolNetEnhancer is a python module integrating chemical class and substructure 
 * [Other citations](#other_citations)
 * [License](#licence)
 
-## Install
+## Installation
 
-Install with:
+Install pyMolNetEnhancer with:
 
  `pip install pyMolNetEnhancer`
  
