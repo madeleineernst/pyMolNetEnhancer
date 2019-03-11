@@ -5,6 +5,8 @@
 * [Install](#install)
 * [Map MS2LDA substructural information to mass spectral molecular networks (classical)](#Mass2Motifs_to_Network_Classical)
 * [Map MS2LDA substructural information to mass spectral molecular networks (feature based)](#Mass2Motifs_to_Network_FeatureBased)
+* [Map chemical class information to mass spectral molecular networks](#ChemicalClasses_to_Network)
+* [Dependencies](#dependencies)
 * [License](#licence)
 
 ## Install
@@ -67,6 +69,19 @@ The only things you need to specify are:
   <tt>top</tt>: This parameter specifies how many most shared motifs per molecular family (network component index) should be shown. Default is 5.
 </li>
 </ol>
+
+## Map chemical class information to mass spectral molecular networks <a name="ChemicalClasses_to_Network"></a>
+
+In order to map chemical class information to a mass spectral molecular network you need to:
+
+* Create a molecular network using the [classical](https://ccms-ucsd.github.io/GNPSDocumentation/quickstart/) or [feature based](https://ccms-ucsd.github.io/GNPSDocumentation/featurebasedmolecularnetworking/) workflow through the Global Natural Products Social Molecular Networking (GNPS) platform
+* Perform <i>in silico</i> structure annotation using [Network Annotation Propagation](https://ccms-ucsd.github.io/GNPSDocumentation/nap/) (NAP), [DEREPLICATOR](https://ccms-ucsd.github.io/GNPSDocumentation/dereplicator/) or another tool of preference for <i>in silico</i> structure annotation 
+
+Then execute the code in [Example_notebooks/ChemicalClasses_2_Network.ipynb](https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/Example_notebooks/ChemicalClasses_2_Network.ipynb) line by line.
+The only things you need to specify are:
+
+
+
 
 ## Dependencies
 
