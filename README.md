@@ -4,6 +4,7 @@
 
 * [Install](#install)
 * [Map MS2LDA substructural information to mass spectral molecular networks (classical)](#Mass2Motifs_to_Network_Classical)
+* [Map MS2LDA substructural information to mass spectral molecular networks (feature based)](#Mass2Motifs_to_Network_FeatureBased)
 * [License](#licence)
 
 ## Install
@@ -23,6 +24,32 @@ In order to map substructural information to a mass spectral molecular network y
 <img src="IMG/DownloadCulsteredMGF.png"/>
 
 Then execute the code in [Example_notebooks/Mass2Motifs_2_Network_Classicaly.ipynb](https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/Example_notebooks/Mass2Motifs_2_Network_Classical.ipynb) line by line.
+The only things you need to specify are:
+
+<ol>
+  <li>Your GNPS job ID 
+  <img src="IMG/GNPSJobID.png"/></li>
+  <li>Your MS2LDA job ID
+  <img src="IMG/MS2LDAJobID.png"/>
+  <b>Note</b>: Depending on the size of this file, a server connection timeout may occur. Alternatively, you may download the file manually at http://ms2lda.org/: <br>
+  <img src="IMG/Export_MS2LDA_Summary.jpg"/></li>
+  <li>User-defined parameters for mapping the Mass2Motifs onto the network
+  <img src="IMG/Mass2Motif_2_Network_Parameters.png"/>
+  <tt>prob</tt>: minimal probability score for a Mass2Motif to be included. Default is 0.01. <br>
+  <tt>overlap</tt>: minimal overlap score for a Mass2Motif to be included. Default is 0.3. <br>
+  <b>Important</b>: The probability and overlap thresholds can be set within the ms2lda.org app as well under the Experimental Options tab. It is recommendable to do so when inspecting results in the web app. Importantly, the summary table contains filtered motif-document relations using the set thresholds in the web app. <br>
+  <tt>top</tt>: This parameter specifies how many most shared motifs per molecular family (network component index) should be shown. Default is 5.
+</li>
+</ol>
+
+## Map MS2LDA substructural information to mass spectral molecular networks (feature based) <a name="Mass2Motifs_to_Network_FeatureBased"></a>
+
+In order to map substructural information to a mass spectral molecular network created through the feature based workflow you need to:
+
+* [Create a feature based molecular network](https://ccms-ucsd.github.io/GNPSDocumentation/featurebasedmolecularnetworking/) through the Global Natural Products Social Molecular Networking (GNPS) platform
+* Create an LDA experiment on [http://ms2lda.org/](http://ms2lda.org/) using the MGF file created within MZmine (see [GNPS documentation](https://ccms-ucsd.github.io/GNPSDocumentation/featurebasedmolecularnetworking/))
+
+Then execute the code in [Example_notebooks/Mass2Motifs_2_Network_FeatureBased.ipynb](https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/Example_notebooks/Mass2Motifs_2_Network_FeatureBased.ipynb) line by line.
 The only things you need to specify are:
 
 <ol>
