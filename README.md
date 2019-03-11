@@ -104,10 +104,13 @@ path = '/Applications/MarvinSuite/bin/'
 os.environ['PATH'] += ':'+path
 ```
 
-To visualize results import the .graphml output file into [Cytoscape](https://cytoscape.org/). To color nodes based on the chemical subclass select 'Fill Color' in the 'Node' tab to the left, choose 'CF_subclass' as <i>Column</i> and 'Discrete Mapping' as <i>Mapping Type</i>:
+To visualize results import the .graphml output file into [Cytoscape](https://cytoscape.org/). To color nodes based on the chemical subclass select 'Fill Color' in the 'Node' tab to the left and choose 'CF_subclass' as <i>Column</i> and 'Discrete Mapping' as <i>Mapping Type</i>:
 <img src="IMG/ChemicalClassesMapped.png"/>
 
+To color nodes based on the chemical subclass select 'Fill Color' in the 'Node' tab to the left and choose 'CF_subclass_score' as <i>Column</i> and 'Continuous Mapping' as <i>Mapping Type</i>:
+<img src="IMG/ChemicalClassScoreMapped.png"/>
 
+All columns related to chemical class information are labeled with 'CF_', and chemical class information at other hierarchical levels of the chemical taxonomy can be mapped analogously (e.g. CF_superclass, CF_superclass_score, CF_class, etc.)
 
 ## Dependencies
 
