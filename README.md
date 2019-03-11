@@ -144,10 +144,10 @@ where 'MG' corresponds to the Mass2Motif network and 'final' to the dataframe ou
 
 python 3.6.5, collections 0.6.1, csv 1.0, functools, joblib 0.13.0, json 2.0.9, multiprocessing, networkx 2.1, operator, os, pandas 0.22.0, rdkit, re 2.2.1, requests 2.18.4, sys, time
 
-## Main citation
+## Main citation <a name="main_citation"></a>
 https://github.com/madeleineernst/pyMolNetEnhancer
 
-## Other citations
+## Other citations <a name="other_citations"></a>
 MolNetEnhancer uses molecular networking through GNPS: <br>
 Wang, M.; Carver, J. J.; Phelan, V. V.; Sanchez, L. M.; Garg, N.; Peng, Y.; Nguyen, D. D.; Watrous, J.; Kapono, C. A.; Luzzatto-Knaan, T.; et al. Sharing and Community Curation of Mass Spectrometry Data with Global Natural Products Social Molecular Networking. Nat. Biotechnol. 2016, 34 (8), 828–837.
 https://www.nature.com/articles/nbt.3597
@@ -162,7 +162,7 @@ http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1006089
 
 MolNetEnhancer uses DEREPLICATOR: <br>
 Mohimani, H.; Gurevich, A.; Mikheenko, A.; Garg, N.; Nothias, L.-F.; Ninomiya, A.; Takada, K.; Dorrestein, P.C.; Pevzner, P.A. Dereplication of peptidic natural products through database search of mass spectra. Nat. Chem. Biol. 2017, 13, 30-37.
-http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1006089
+https://www.nature.com/articles/nchembio.2219
 
 MolNetEnhancer uses automated chemical classification through ClassyFire: <br>
 Feunang, Y. D.; Eisner, R.; Knox, C.; Chepelev, L.; Hastings, J.; Owen, G.; Fahy, E.; Steinbeck, C.; Subramanian, S.; Bolton, E.; Greiner, R.; Wishart, D.S. ClassyFire: automated chemical classification with a comprehensive, computable taxonomy. J. Cheminform. 2016, 8, 61.
