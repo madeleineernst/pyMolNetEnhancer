@@ -80,7 +80,20 @@ In order to map chemical class information to a mass spectral molecular network 
 Then execute the code in [Example_notebooks/ChemicalClasses_2_Network.ipynb](https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/Example_notebooks/ChemicalClasses_2_Network.ipynb) line by line.
 The only things you need to specify are:
 
+<ol>
+  <li>Your GNPS job ID 
+  <img src="IMG/GNPSJobID.png"/></li>
+  <li>Your DEREPLICATOR job ID(s)
+  <img src="IMG/DereplicatorJobID.png"/></li>
+  <li>Your NAP job ID(s)
+  <img src="IMG/NAPJobID.png"/>
+  </li>
+</ol>
 
+You can specify as many <i>in silico</i> annotation outputs as you wish. If you import results from applications different than NAP or DEREPLICATOR make sure that your input file is tab separated and includes a column named 'Scan' containing numeric identifiers matching the numeric node identifiers in the GNPS network and a column named 'SMILES' containing SMILES structures.
+Make sure that you include all results as dataframe list items in the 'matches' object. The object 'gnpslib' contains all GNPS library hits.
+
+ `matches = [gnpslib, nap, derep]`
 
 
 ## Dependencies
