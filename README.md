@@ -1,13 +1,20 @@
 # pyMolNetEnhancer
 
-### Install
+### Table of contents
+
+* [Install](#install)
+* [Map MS2LDA substructural information to mass spectral molecular networks (classical)](#Mass2Motifs_to_Network_Classical)
+* [Help and Troubleshooting](#help-and-troubleshooting)
+* [License](#licence)
+
+## Install
 
 Install with:
 
  `pip install pyMolNetEnhancer`
  
  
-### Map MS2LDA substructural information to mass spectral molecular networks (classical)
+## Map MS2LDA substructural information to mass spectral molecular networks (classical) <a name="Mass2Motifs_to_Network_Classical"></a>
  
 In order to map substructural information to a mass spectral molecular network you need to:
  
@@ -34,4 +41,5 @@ The only things you need to specify are:
 </li>
 </ol>
  
- 
+## Licence
+This repository is available under the following licence https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/LICENSE
