@@ -124,6 +124,8 @@ def unique_smiles(matches):
     
     # convert list into dataframe
     df = pd.DataFrame({"SMILES": l})
+    # remove white space from SMILES
+    df.SMILES = df.SMILES.str.replace(' ', '')
     
     return {'df':df, 'dic':comb_dic}
 
