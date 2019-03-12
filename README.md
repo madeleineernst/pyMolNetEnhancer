@@ -98,7 +98,7 @@ In order to map chemical class information to a mass spectral molecular network 
 * Create a molecular network using the [classical](https://ccms-ucsd.github.io/GNPSDocumentation/quickstart/) or [feature based](https://ccms-ucsd.github.io/GNPSDocumentation/featurebasedmolecularnetworking/) workflow through the Global Natural Products Social Molecular Networking (GNPS) platform
 * Perform <i>in silico</i> structure annotation using [Network Annotation Propagation](https://ccms-ucsd.github.io/GNPSDocumentation/nap/) (NAP), [DEREPLICATOR](https://ccms-ucsd.github.io/GNPSDocumentation/dereplicator/) or another tool of preference for <i>in silico</i> structure annotation 
 
-Then execute the code in [Example_notebooks/ChemicalClasses_2_Network.ipynb](https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/Example_notebooks/ChemicalClasses_2_Network.ipynb) line by line.
+Then execute the code in [Example_notebooks/Mass2Motifs_2_Network_Classical.ipynb](https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/Example_notebooks/Mass2Motifs_2_Network_Classical.ipynb) or [Example_notebooks/Mass2Motifs_2_Network_FeatureBased.ipynb](https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/Example_notebooks/Mass2Motifs_2_Network_FeatureBased.ipynb) line by line.
 The only things you need to specify are:
 
 <ol>
@@ -133,16 +133,16 @@ All columns related to chemical class information are labeled with 'CF_', and ch
 
 ## Map chemical class and MS2LDA substructural information to mass spectral molecular networks <a name="ChemicalClasses_Motifs_to_Network"></a>
 
-In order to map chemical class and MS2LDA substructural information to a mass spectral molecular network follow steps described for [mapping MS2LDA substructural information using the classical](#Mass2Motifs_to_Network_Classical) or
-[feature based](#Mass2Motifs_to_Network_FeatureBased) workflow and [mapping chemical class information to mass spectral molecular networks](#ChemicalClasses_to_Network). To create a graphml file containing both Mass2Motif as well as chemical class information do:
+In order to map chemical class and MS2LDA substructural information to a mass spectral molecular network follow steps described in [Map MS2LDA substructural information to mass spectral molecular networks (classical)](#Mass2Motifs_to_Network_Classical) and [Map chemical class information to mass spectral molecular networks](#ChemicalClasses_to_Network)
+for classical molecular networking and steps described in [Map MS2LDA substructural information to mass spectral molecular networks (feature based)](#Mass2Motifs_to_Network_FeatureBased) and [Map chemical class information to mass spectral molecular networks](#ChemicalClasses_to_Network) for feature based molecular networking. To create a graphml file containing both Mass2Motif as well as chemical class information do:
 
 ```
 graphML_classy = make_classyfire_graphml(MG,final)
 nx.write_graphml(graphML_classy, "Motif_ChemicalClass_Network_Classical.graphml", infer_numeric_types = True)
 ```
 
-where 'MG' corresponds to the Mass2Motif network and 'final' to the dataframe output created when mapping chemical class information. For an example see [Example_notebooks/Mass2Motifs_2_Network_Classical.ipynb](https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/Example_notebooks/Mass2Motifs_2_Network_Classical.ipynb). To visualize the network in Cytoscape proceed as described in [mapping MS2LDA substructural information using the classical](#Mass2Motifs_to_Network_Classical) or
-[feature based](#Mass2Motifs_to_Network_FeatureBased) workflow and [mapping chemical class information to mass spectral molecular networks](#ChemicalClasses_to_Network). 
+where 'MG' corresponds to the network with mapped Mass2Motifs and 'final' to the dataframe output created when mapping chemical class information. An example is shown in [Example_notebooks/Mass2Motifs_2_Network_Classical.ipynb](https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/Example_notebooks/Mass2Motifs_2_Network_Classical.ipynb) and [Example_notebooks/Mass2Motifs_2_Network_FeatureBased.ipynb](https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/Example_notebooks/Mass2Motifs_2_Network_FeatureBased.ipynb). To visualize the network in Cytoscape proceed as described in follow steps described in [Map MS2LDA substructural information to mass spectral molecular networks (classical)](#Mass2Motifs_to_Network_Classical) and [Map chemical class information to mass spectral molecular networks](#ChemicalClasses_to_Network)
+for classical molecular networking and steps described in [Map MS2LDA substructural information to mass spectral molecular networks (feature based)](#Mass2Motifs_to_Network_FeatureBased) and [Map chemical class information to mass spectral molecular networks](#ChemicalClasses_to_Network) for feature based molecular networking.
 
 ## Dependencies
 
