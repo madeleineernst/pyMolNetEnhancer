@@ -12,7 +12,7 @@ pyMolNetEnhancer is a python module integrating chemical class and substructure 
 * [Dependencies](#dependencies)
 * [Main citation](#main_citation)
 * [Other citations](#other_citations)
-* [License](#licence)
+* [License](#license)
 
 ## Installation
 
@@ -170,5 +170,5 @@ MolNetEnhancer uses automated chemical classification through ClassyFire: <br>
 Feunang, Y. D.; Eisner, R.; Knox, C.; Chepelev, L.; Hastings, J.; Owen, G.; Fahy, E.; Steinbeck, C.; Subramanian, S.; Bolton, E.; Greiner, R.; Wishart, D.S. ClassyFire: automated chemical classification with a comprehensive, computable taxonomy. J. Cheminform. 2016, 8, 61.
 https://jcheminf.biomedcentral.com/articles/10.1186/s13321-016-0174-y
 
-## Licence
-This repository is available under the following licence https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/LICENSE
+## License
+This repository is available under the following license https://github.com/madeleineernst/pyMolNetEnhancer/blob/master/LICENSE
