@@ -11,9 +11,13 @@ import pandas as pd
 pd.options.mode.chained_assignment = None 
 
 def Mass2Motif_2_Network(edges,motifs,prob = 0.01,overlap = 0.3, top = 5):
-    
+		
     motifs = motifs[motifs.probability > prob]
     motifs = motifs[motifs.overlap > overlap]
+    
+    if 'MEH' not in edges.columns and 'OtherScore' not in edges.columns:
+        edges['MEH'] = 0.0 
+        edges['OtherScore'] = 0.0
     
     motifs_con = motifs.groupby('scans').agg(lambda x: x.tolist())
     df = pd.DataFrame(0.0, index=motifs_con.index, columns=motifs.motif.unique())
@@ -58,8 +62,13 @@ def Mass2Motif_2_Network(edges,motifs,prob = 0.01,overlap = 0.3, top = 5):
             #print(row['shared_motifs'])
             for idx,val in enumerate(row['shared_motifs']):
                 #print(row['shared_motifs'][idx])
-                lst.append([row['CLUSTERID1'],row['shared_motifs'][idx],row['CLUSTERID2'], 
+                if 'EdgeAnnotation' not in edges.columns:
+                	lst.append([row['CLUSTERID1'],row['shared_motifs'][idx],row['CLUSTERID2'], 
                         row['DeltaMZ'], row['MEH'], row['Cosine'], row['OtherScore'],row['ComponentIndex'],row['shared_motifs'], row['TopSharedMotifs']])
+                else:
+                	lst.append([row['CLUSTERID1'],row['shared_motifs'][idx],row['CLUSTERID2'], 
+                        row['DeltaMZ'], row['MEH'], row['Cosine'], row['OtherScore'],row['ComponentIndex'],row['EdgeAnnotation'],row['shared_motifs'], row['TopSharedMotifs']])
+
 
     motifedges = pd.DataFrame(lst, columns=cols)
     edges = edges.append(motifedges)
