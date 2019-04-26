@@ -3,15 +3,50 @@
 """
 Created on Mon Aug 13 16:19:11 2018
 
-@author: madeleineernst
+@author: Madeleine Ernst (https://github.com/madeleineernst)
 """
+# Standard library imports
+import os
+import re
+import sys
+import time
+
+# Third party imports 
 import collections
+from collections import Counter
 from collections import OrderedDict
+import csv  
+import functools
+from functools import reduce
+from joblib import Parallel, delayed
+import json
+import multiprocessing
+from networkx import *
+import operator
 import pandas as pd
+import requests
+import requests_cache
+
 pd.options.mode.chained_assignment = None 
+requests_cache.install_cache('demo_cache')
 
 def Mass2Motif_2_Network(edges,motifs,prob = 0.01,overlap = 0.3, top = 5):
-		
+    """Map Mass2Motifs onto a mass spectral molecular network
+
+    :param edges: An edges file downloaded from GNPS 
+    :type edges: pandas.core.frame.DataFrame
+    :param motifs: A motif summary file downloaded from MS2LDA
+    :type motifs: pandas.core.frame.DataFrame
+    :param prob: Minimal probability score for a Mass2Motif to be included 
+    :type prob: float
+    :param overlap: Minimal overlap score for a Mass2Motif to be included
+    :type overlap: float
+    :param top: Specifies how many most shared motifs per molecular family (network component index) should be shown
+    :type top: int
+    :return: A dictionary of two dataframes containing network nodes and edges with motifs mapped
+    :rtype: dict
+
+    """	
     motifs = motifs[motifs.probability > prob]
     motifs = motifs[motifs.overlap > overlap]
     
@@ -59,9 +94,7 @@ def Mass2Motif_2_Network(edges,motifs,prob = 0.01,overlap = 0.3, top = 5):
 
     for index, row in edges.iterrows():
         if row['shared_motifs'] != 'None':
-            #print(row['shared_motifs'])
             for idx,val in enumerate(row['shared_motifs']):
-                #print(row['shared_motifs'][idx])
                 if 'EdgeAnnotation' not in edges.columns:
                 	lst.append([row['CLUSTERID1'],row['shared_motifs'][idx],row['CLUSTERID2'], 
                         row['DeltaMZ'], row['MEH'], row['Cosine'], row['OtherScore'],row['ComponentIndex'],row['shared_motifs'], row['TopSharedMotifs']])
@@ -75,17 +108,15 @@ def Mass2Motif_2_Network(edges,motifs,prob = 0.01,overlap = 0.3, top = 5):
     
     return {'nodes':comb,'edges':edges}
 
-import csv  
-import json
-import pandas as pd
-import re
-from functools import reduce
-
-import functools
-import operator
-from collections import Counter
-
 def make_inchidic(smilesdic):
+    """Convert a dictionary of SMILES to a dictionary of InChIKeys
+
+    :param smilesdic: A dictionary of SMILES
+    :type smilesdic: dict
+    :return: A dictionary of InChIKeys
+    :rtype: InChIKeys
+
+    """
     inchi_dic = smilesdic['dic'].copy()
     d = {k: v for k, v in zip(smilesdic['df'].SMILES, smilesdic['df'].inchikey)}
     for k in inchi_dic:
@@ -94,8 +125,15 @@ def make_inchidic(smilesdic):
     return inchi_dic
 
 def unique_smiles(matches):
-    
-    # combine SMILES for same feature into one string features
+    """Retrieve overall unique SMILES and unique SMILES per molecular feature 
+
+    :param matches: A list of dataframes with feature IDs and corresponding SMILES, where each dataframe can correspond to a different source of chemical structural annotation (e.g. GNPS library matches, in silico strucutral prediction through NAP, Dereplicator or SIRIUS+CSI:FingerID). Feature IDs need to correspond in all dataframes as well as the mass spectral molecular network.
+    :type matches: list
+    :return: A dictionary containing a dataframe with doverall unique SMILES and a dictionary with unique SMILES per molecular feature
+    :rtype: dict
+
+    """
+    # combine SMILES for same feature into one string of features
     for index, item in enumerate(matches):
         if 'Scan' in matches[index].columns:
             matches[index] = matches[index].groupby('Scan', as_index=False).agg(lambda x: ','.join(set(x.dropna()))) 
@@ -123,7 +161,7 @@ def unique_smiles(matches):
         comb_dic[i] = list(set(comb_dic[i]))
         
     # remove empty values
-    comb_dic = {k: comb_dic[k] for k in comb_dic if not comb_dic[k] == ['']} # 2172
+    comb_dic = {k: comb_dic[k] for k in comb_dic if not comb_dic[k] == ['']} 
     comb_dic = {k: comb_dic[k] for k in comb_dic if not comb_dic[k] == []}
     comb_dic = {k: comb_dic[k] for k in comb_dic if not comb_dic[k] == [' ']}
     
@@ -133,24 +171,36 @@ def unique_smiles(matches):
     
     # convert list into dataframe
     df = pd.DataFrame({"SMILES": l})
+    
     # remove white space from SMILES
     df.SMILES = df.SMILES.str.replace(' ', '')
     
     return {'df':df, 'dic':comb_dic}
 
-# retrieve most predominant chemical group per componentindex at one hierarchical level
 def highestscore(a, chem_dic, score):
-    
-    # creates list of lists, where each list item corresponds to one componentindex
+    """Retrieve most predominant chemical class per componentindex at a single level of the ClassyFire chemical ontology
+
+    :param a: list of all cluster indexes per componentindex
+    :type a: list
+    :param chem_dic: A dictionary of chemical classes at a single level of the ClassyFire chemical ontology
+    :type chem_dic: dict
+    :param score: A list of number of nodes per compontentindex
+    :type score: list
+    :return: List of componentindexes with name and score of the most predominant chemical class at a signle level of the ClassyFire chemical ontology
+    :rtype: list
+
+    """
+    # creates a list of lists, where each list item corresponds to one componentindex
     # each sublist item corresponds to the chemical classes of the SMILES matched to one node
     chem_ci = []
     for i in a:
         chem_ci.append([chem_dic[x] for x in i])
 
-    # creates a list of dictionaries. Each list item corresponds to one componentindex and each
+    # Creates a list of dictionaries, where each list item corresponds to one componentindex and each
     # dictionary corresponds to the chemical categories found within this node with a corresponding score.
+    #
     # This score sums up to 1 per node and corresponds to the number of SMILES associated with this class 
-    # divided by the total number of SMILES per node
+    # divided by the total number of SMILES per node.
     chem_scores = [] 
     for i in chem_ci:
         subl = []
@@ -161,9 +211,10 @@ def highestscore(a, chem_dic, score):
         chem_scores.append(subl)
 
     # List of dictionaries, each list item corresponds to one componentindex and dictionaries contain
-    # summed values per chemical category per component index
-    # E.g. Organic acids and derivatives': 2.1246753246753247 
-    # means that 2.12 nodes in this molecular family were classified as Organic acids and derivatives
+    # summed values per chemical category per component index.
+    #
+    # E.g. Organic acids and derivatives': 2.1246753246753247 means that 2.12 nodes
+    # in this molecular family were classified as Organic acids and derivatives
     chem_sums = []
     for i in chem_scores:
         if i:
@@ -172,10 +223,11 @@ def highestscore(a, chem_dic, score):
             sums = []
         chem_sums.append(sums)
 
-    # list of items, each list item corresponds to one componentindex and name and score of the most highly abundant
-    # chemical class are found in it 
+    # List of items, where each list item corresponds to one componentindex and name and score of the most highly abundant
+    # chemical class are found in it.
+    # 
     # E.g. Lipids and 0.75 means that 0.75 of the molecular family was associated to lipids, 
-    # this could be the case if e.g. Lipids score is 2.25 (nodes) and the molecular family consits of a total of 3 nodes
+    # this could be the case if e.g. Lipids score is 2.25 (nodes) and the molecular family consits of a total of 3 nodes.
     chem_finalscore = []
     for index, item in enumerate(chem_sums): 
         if chem_sums[index]:
@@ -188,13 +240,19 @@ def highestscore(a, chem_dic, score):
     
     return chem_finalscore
 
-
 def molfam_classes(net, df, smilesdict):
-    
-    # df is a pandas dataframe comprising all unique SMILES, inchikeys and corresponding ClassyFire ontology
-    # net is the GNPS network data
-    # smilesdict is a dictionary of nodes with corresponding unique SMILES
-    
+    """Retrieve most predominant chemical class for each level of the ClassyFire chemical ontology
+
+    :param net: GNPS network data
+    :type net: pandas.core.frame.DataFrame
+    :param df: A dataframe comprising all unique SMILES, InChIKeys and corresponding chemical classes at each level of the ClassyFire chemical ontology
+    :type df: pandas.core.frame.DataFrame
+    :param smilesdict: A dictionary of nodes with corresponding unique SMILES
+    :type smilesdict: dict
+    :return: A dataframe containing most predominant chemical classes per node at each level of the ClassyFire chemical ontology
+    :rtype: pandas.core.frame.DataFrame
+
+    """
     # create dictionaries for each hierarchical level of Classyfire
     
     # rename componentindex of selfloops, so they are considered independently of each other
@@ -273,21 +331,28 @@ def molfam_classes(net, df, smilesdict):
     Dparent_score =[item[1] for item in Dparent_finalscore]
     MFramework_score =[item[1] for item in MFramework_finalscore]
     
-        
     data_tuples = list(zip(ci,score,kingdom,kingdom_score,superclass,superclass_score,CF_class,CF_class_score,subclass,subclass_score,Dparent,Dparent_score,MFramework,MFramework_score))
     sumary = pd.DataFrame(data_tuples, columns=['componentindex','CF_NrNodes','CF_kingdom','CF_kingdom_score','CF_superclass','CF_superclass_score','CF_class','CF_class_score','CF_subclass','CF_subclass_score','CF_Dparent','CF_Dparent_score','CF_MFramework','CF_MFramework_score'])
         
     final = pd.merge(net[['componentindex','cluster index']], sumary, on='componentindex')
+    
     # make cluster index first column
     final = final[['cluster index','componentindex','CF_NrNodes','CF_kingdom','CF_kingdom_score','CF_superclass','CF_superclass_score','CF_class','CF_class_score','CF_subclass','CF_subclass_score','CF_Dparent','CF_Dparent_score','CF_MFramework','CF_MFramework_score']]
     final = final.rename(columns = {'componentindex':'CF_componentindex'})
     
     return final
     
-from networkx import *
-    
 def make_classyfire_graphml(graphML,final):
+    """Create a network file with chemical classes mapped
 
+    :param graphml: GNPS network file
+    :type graphml: networkx.classes.graph.Graph
+    :param final: A dataframe containing most predominant chemical classes per node at each level of the ClassyFire chemical ontology
+    :type final: pandas.core.frame.DataFrame
+    :return: A network file with most predominant chemical classes per node mapped at each level of the ClassyFire chemical ontology
+    :rtype: networkx.classes.graph.Graph
+
+    """
     for v in graphML.nodes():  
 
         graphML.node[v]['CF_componentindex']= str(final[final['cluster index'] == int(v)]['CF_componentindex'].iloc[-1])
@@ -337,7 +402,16 @@ def make_classyfire_graphml(graphML,final):
     return graphML
     
 def make_motif_graphml(nodes, edges):
-    
+    """Create a network file with Mass2Motifs mapped on nodes and shared Mass2Motifs mapped as multiple edges
+
+    :param nodes: A dataframe showing Mass2Motifs per node
+    :type nodes: pandas.core.frame.DataFrame
+    :param edges: A dataframe showing shared Mass2Motifs for each network pair
+    :type edges: pandas.core.frame.DataFrame
+    :return: A network file with Mass2Motifs mapped on nodes and shared Mass2Motifs mapped as multiple edges
+    :rtype: networkx.classes.graph.Graph
+
+    """
     # convert lists to strings
     edges['shared_motifs'] = edges['shared_motifs'].replace('None', '')
     edges['TopSharedMotifs'] = edges['TopSharedMotifs'].replace('None', '')
@@ -411,15 +485,6 @@ def make_classy_table(jsondic):
 @author: Ming Wang (https://github.com/mwang87)
 """
 
-import sys
-import os
-import csv
-import json
-import requests
-import requests_cache
-
-requests_cache.install_cache('demo_cache')
-
 def get_structure_class_entity(inchikey):
     print(inchikey)
     entity = None
@@ -487,14 +552,7 @@ def get_structure_class(inchikey):
 """A client for the ClassyFire API which enables efficient querying with
  chemical database files"""
 
-import requests
-import csv
-import time
-import os
-import json
-
 url = "http://classyfire.wishartlab.com"
-#url = "http://cfb.fiehnlab.ucdavis.edu/"
 chunk_size = 1000
 sleep_interval = 60
 
@@ -563,7 +621,6 @@ def get_results(query_id, return_format="json", blocking=False):
     >>> get_results('595535', 'sdf')
 
     """
-
     if blocking == False:
         r = requests.get('%s/queries/%s.%s' % (url, query_id, return_format),
                          headers={"Content-Type": "application/%s" % return_format})
@@ -745,22 +802,15 @@ def _prevent_overwrite(write_path, suffix='_annotated'):
             write_path += suffix
     return write_path
 
-## Ming parallel library
-#!/usr/bin/python
-
-from joblib import Parallel, delayed
-import multiprocessing
-import os
-
 def run_shell_command(script_to_run):
 	os.system(script_to_run)
 	return "DONE"
 
-#Wraps running in parallel a set of shell scripts
+# Wraps running in parallel a set of shell scripts
 def run_parallel_shellcommands(input_shell_commands, parallelism_level):
 	return run_parallel_job(run_shell_command, input_shell_commands, parallelism_level)
 
-#Wraps the parallel job running, simplifying code
+# Wraps the parallel job running, simplifying code
 def run_parallel_job(input_function, input_parameters_list, parallelism_level):
 	if parallelism_level == 1:
 		output_results_list = []
