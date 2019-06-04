@@ -149,6 +149,7 @@ for classical molecular networking and steps described in [Map MS2LDA substructu
 python 3.6.5, collections 0.6.1, csv 1.0, functools, joblib 0.13.0, json 2.0.9, multiprocessing, networkx 2.1, operator, os, pandas 0.22.0, rdkit, re 2.2.1, requests 2.18.4, sys, time
 
 ## Main citation <a name="main_citation"></a>
+https://www.biorxiv.org/content/10.1101/654459v1
 https://github.com/madeleineernst/pyMolNetEnhancer
 
 ## Other citations <a name="other_citations"></a>
