@@ -1,37 +1,13 @@
 package:
   name: pymolnetenhancer
-  version: "0.0.4"
-
-source:
-  git_url: https://github.com/madeleineernst/pyMolNetEnhancer
+  version: 0.0.8
 
 build:
-  noarch: python
-  
-requirements:
-  host:
-    - python
-    - setuptools
-    - scipy
-    - pytest
-    - pytest-runner
+  number: 3
 
+requirements:
   run:
     - python
-    - scipy
-    - scikit-bio
-    - pandas
-    - numpy
-    - pytest
-
-  test:
-    requires:
-      - pytest
-      - pytest-runner
-
-
-
-
 about:
   home: https://github.com/madeleineernst/pyMolNetEnhancer
   license: MIT
