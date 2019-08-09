@@ -553,6 +553,7 @@ def get_structure_class(inchikey):
  chemical database files"""
 
 url = "http://classyfire.wishartlab.com"
+proxy_url =  "https://gnps-classyfire.ucsd.edu"
 chunk_size = 1000
 sleep_interval = 60
 
@@ -639,7 +640,7 @@ def get_results(query_id, return_format="json", blocking=False):
                 time.sleep(10)
 
 
-def get_entity(inchikey, return_format="json"):
+def get_entity(inchikey, return_format="json", gnps_proxy = True):
     """Given a InChIKey for a previously queried structure, fetch the
      classification results.
 
@@ -656,9 +657,21 @@ def get_entity(inchikey, return_format="json"):
 
     """
     inchikey = inchikey.replace('InChIKey=', '')
-    r = requests.get('%s/entities/%s.%s' % (url, inchikey, return_format),
+    
+    if gnps_proxy == True:
+        
+        r = requests.get('%s/entities/%s.%s' % (proxy_url, inchikey, return_format),
                      headers={
                          "Content-Type": "application/%s" % return_format})
+        print('%s/entities/%s.%s' % (proxy_url, inchikey, return_format))
+        
+    else:
+        
+        r = requests.get('%s/entities/%s.%s' % (url, inchikey, return_format),
+                     headers={
+                         "Content-Type": "application/%s" % return_format})
+        print('%s/entities/%s.%s' % (url, inchikey, return_format))
+        
     r.raise_for_status()
     return r.text
 
@@ -823,6 +836,7 @@ def run_parallel_job(input_function, input_parameters_list, parallelism_level):
 		return results
 		
 def get_classifications(inchifile):
+
     with open(inchifile) as csvfile:
         all_inchi_keys = []
     
@@ -839,6 +853,6 @@ def get_classifications(inchifile):
             continue
     
         #all_inchi_keys = all_inchi_keys[-1000:]
-        all_json = run_parallel_job(get_structure_class_entity, all_inchi_keys, 50)
+        all_json = run_parallel_job(get_structure_class_entity, all_inchi_keys, parallelism_level = 50)
     
         open("all_json.json", "w").write(json.dumps(all_json))
