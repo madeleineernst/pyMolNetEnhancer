@@ -167,7 +167,8 @@ def unique_smiles(matches):
     
     # convert dictionary into list of unique SMILES
     l = list(set([item for sublist in list(comb_dic.values()) for item in sublist]))
-    l = [x for x in l if x not in ['',' ',None]]
+    l = [x.strip() for x in l]
+    l = [x for x in l if x not in ['',' ',None, 'N/A']]
     
     # convert list into dataframe
     df = pd.DataFrame({"SMILES": l})
