@@ -836,7 +836,7 @@ def run_parallel_job(input_function, input_parameters_list, parallelism_level):
 		results = Parallel(n_jobs = parallelism_level)(delayed(input_function)(input_object) for input_object in input_parameters_list)
 		return results
 		
-def get_classifications(inchifile):
+def get_classifications(inchifile, parallelism_level=50):
 
     with open(inchifile) as csvfile:
         all_inchi_keys = []
@@ -854,6 +854,6 @@ def get_classifications(inchifile):
             continue
     
         #all_inchi_keys = all_inchi_keys[-1000:]
-        all_json = run_parallel_job(get_structure_class_entity, all_inchi_keys, parallelism_level = 50)
+        all_json = run_parallel_job(get_structure_class_entity, all_inchi_keys, parallelism_level = parallelism_level)
     
         open("all_json.json", "w").write(json.dumps(all_json))
