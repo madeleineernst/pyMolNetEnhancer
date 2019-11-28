@@ -222,7 +222,7 @@ def unique_inchis(matches):
     
     # split comma separated strings of SMILES 
     for k in comb_dic:
-        comb_dic[k] = comb_dic[k].split(',')
+        comb_dic[k] = comb_dic[k].split(';')
     
     # retrieve unique SMILES per feature
     for i in comb_dic:
