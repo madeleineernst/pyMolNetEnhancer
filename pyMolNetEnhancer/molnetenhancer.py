@@ -123,6 +123,20 @@ def make_inchidic(smilesdic):
         inchi_dic[k] = [d.get(k, k) for k in inchi_dic[k] if d.get(k, k) != k]
     
     return inchi_dic
+    
+def make_inchidic_INCHIS(smilesdic):
+    """Convert a dictionary of INCHIS to a dictionary of InChIKeys
+    :param smilesdic: A dictionary of INCHIS
+    :type smilesdic: dict
+    :return: A dictionary of InChIKeys
+    :rtype: InChIKeys
+    """
+    inchi_dic = smilesdic['dic'].copy()
+    d = {k: v for k, v in zip(smilesdic['df'].INCHI, smilesdic['df'].inchikey)}
+    for k in inchi_dic:
+        inchi_dic[k] = [d.get(k, k) for k in inchi_dic[k] if d.get(k, k) != k]
+    
+    return inchi_dic
 
 def unique_smiles(matches):
     """Retrieve overall unique SMILES and unique SMILES per molecular feature 
@@ -177,6 +191,61 @@ def unique_smiles(matches):
     df.SMILES = df.SMILES.str.replace(' ', '')
     
     return {'df':df, 'dic':comb_dic}
+    
+def unique_inchis(matches):
+    """Retrieve overall unique INCHIS and unique INCHIS per molecular feature 
+
+    :param matches: A list of dataframes with feature IDs and corresponding INCHIS, where each dataframe can correspond to a different source of chemical structural annotation (e.g. GNPS library matches, in silico strucutral prediction through NAP, Dereplicator or SIRIUS+CSI:FingerID). Feature IDs need to correspond in all dataframes as well as the mass spectral molecular network.
+    :type matches: list
+    :return: A dictionary containing a dataframe with doverall unique INCHIS and a dictionary with unique INCHIS per molecular feature
+    :rtype: dict
+
+    """
+    # combine SMILES for same feature into one string of features
+    for index, item in enumerate(matches):
+        if 'Scan' in matches[index].columns:
+            matches[index] = matches[index].groupby('Scan', as_index=False).agg(lambda x: ','.join(set(x.dropna()))) 
+            matches[index] = matches[index].rename(columns = {'Scan':'cluster.index'})
+        if '#Scan#' in matches[index].columns:
+        	matches[index] = matches[index].groupby('#Scan#', as_index=False).agg(lambda x: ','.join(set(x.dropna())))
+        	matches[index] = matches[index].rename(columns = {'#Scan#':'cluster.index'})
+            
+    comb = reduce(lambda left,right: pd.merge(left,right,on='cluster.index', how = "outer"), matches)
+    if 'FusionSMILES' in comb.columns:
+        comb = comb.drop(['FusionSMILES', 'ConsensusSMILES'], axis=1)
+    
+    # concatenate all SMILES
+    comb['All_INCHIS'] = comb.filter(regex='^.*(INCHI).*$').apply(lambda x: ','.join([y for y in x.tolist() if str(y) != 'nan']), axis=1)
+    
+    # create dictionary of SMILES
+    comb_dic = comb.set_index('cluster.index')['All_INCHIS'].to_dict()
+    
+    # split comma separated strings of SMILES 
+    for k in comb_dic:
+        comb_dic[k] = comb_dic[k].split(',')
+    
+    # retrieve unique SMILES per feature
+    for i in comb_dic:
+        comb_dic[i] = list(set(comb_dic[i]))
+        
+    # remove empty values
+    comb_dic = {k: comb_dic[k] for k in comb_dic if not comb_dic[k] == ['']} 
+    comb_dic = {k: comb_dic[k] for k in comb_dic if not comb_dic[k] == []}
+    comb_dic = {k: comb_dic[k] for k in comb_dic if not comb_dic[k] == [' ']}
+    
+    # convert dictionary into list of unique SMILES
+    l = list(set([item for sublist in list(comb_dic.values()) for item in sublist]))
+    l = [x.strip() for x in l]
+    l = [x for x in l if x not in ['',' ',None, 'N/A']]
+    
+    # convert list into dataframe
+    df = pd.DataFrame({"INCHI": l})
+    
+    # remove white space from SMILES
+    df.SMILES = df.SMILES.str.replace(' ', '')
+    
+    return {'df':df, 'dic':comb_dic} 
+
 
 def highestscore(a, chem_dic, score):
     """Retrieve most predominant chemical class per componentindex at a single level of the ClassyFire chemical ontology
