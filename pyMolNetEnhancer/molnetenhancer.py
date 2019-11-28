@@ -242,7 +242,7 @@ def unique_inchis(matches):
     df = pd.DataFrame({"INCHI": l})
     
     # remove white space from SMILES
-    df.SMILES = df.SMILES.str.replace(' ', '')
+    df.INCHIS = df.INCHIS.str.replace(' ', '')
     
     return {'df':df, 'dic':comb_dic} 
 
