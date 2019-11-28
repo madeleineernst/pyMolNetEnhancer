@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pyMolNetEnhancer",
-    version="0.1.8",
+    version="0.1.9",
     author="Madeleine Ernst, Ming Wang, Ricardo Silva",
     author_email="mernst@ucsd.edu",
     description="A python implementation of MolNetEnhancer",

@@ -24,6 +24,7 @@ import multiprocessing
 from networkx import *
 import operator
 import pandas as pd
+from pandas.api.types import is_numeric_dtype
 import requests
 import requests_cache
 
