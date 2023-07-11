@@ -21,7 +21,7 @@ from functools import reduce
 from joblib import Parallel, delayed
 import json
 import multiprocessing
-from networkx import *
+import networkx as nx
 import operator
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
@@ -47,7 +47,7 @@ def Mass2Motif_2_Network(edges,motifs,prob = 0.01,overlap = 0.3, top = 5):
     :return: A dictionary of two dataframes containing network nodes and edges with motifs mapped
     :rtype: dict
 
-    """	
+    """ 
     motifs = motifs[motifs.probability > prob]
     motifs = motifs[motifs.overlap > overlap]
     
@@ -97,15 +97,15 @@ def Mass2Motif_2_Network(edges,motifs,prob = 0.01,overlap = 0.3, top = 5):
         if row['shared_motifs'] != 'None':
             for idx,val in enumerate(row['shared_motifs']):
                 if 'EdgeAnnotation' not in edges.columns:
-                	lst.append([row['CLUSTERID1'],row['shared_motifs'][idx],row['CLUSTERID2'], 
+                    lst.append([row['CLUSTERID1'],row['shared_motifs'][idx],row['CLUSTERID2'], 
                         row['DeltaMZ'], row['MEH'], row['Cosine'], row['OtherScore'],row['ComponentIndex'],row['shared_motifs'], row['TopSharedMotifs']])
                 else:
-                	lst.append([row['CLUSTERID1'],row['shared_motifs'][idx],row['CLUSTERID2'], 
+                    lst.append([row['CLUSTERID1'],row['shared_motifs'][idx],row['CLUSTERID2'], 
                         row['DeltaMZ'], row['MEH'], row['Cosine'], row['OtherScore'],row['ComponentIndex'],row['EdgeAnnotation'],row['shared_motifs'], row['TopSharedMotifs']])
 
 
     motifedges = pd.DataFrame(lst, columns=cols)
-    edges = edges.append(motifedges)
+    edges = pd.concat([edges,motifedges])
     
     return {'nodes':comb,'edges':edges}
 
@@ -154,8 +154,8 @@ def unique_smiles(matches):
             matches[index] = matches[index].groupby('Scan', as_index=False).agg(lambda x: ','.join(set(x.dropna()))) 
             matches[index] = matches[index].rename(columns = {'Scan':'cluster.index'})
         if '#Scan#' in matches[index].columns:
-        	matches[index] = matches[index].groupby('#Scan#', as_index=False).agg(lambda x: ','.join(set(x.dropna())))
-        	matches[index] = matches[index].rename(columns = {'#Scan#':'cluster.index'})
+            matches[index] = matches[index].groupby('#Scan#', as_index=False).agg(lambda x: ','.join(set(x.dropna())))
+            matches[index] = matches[index].rename(columns = {'#Scan#':'cluster.index'})
             
     comb = reduce(lambda left,right: pd.merge(left,right,on='cluster.index', how = "outer"), matches)
     if 'FusionSMILES' in comb.columns:
@@ -202,9 +202,9 @@ def unique_inchis(matches):
            # matches[index] = matches[index].rename(columns = {'Scan':'cluster.index'})
             
     for index, item in enumerate(matches):
-    	if 'Scan' in matches[index].columns:
-        	matches[index] = matches[index].groupby('Scan', as_index=False).agg(lambda x: ';'.join(map(str,x)) if is_numeric_dtype(x) else ';'.join(set(x.dropna()))) 
-        	matches[index] = matches[index].rename(columns = {'Scan':'cluster.index'})
+        if 'Scan' in matches[index].columns:
+            matches[index] = matches[index].groupby('Scan', as_index=False).agg(lambda x: ';'.join(map(str,x)) if is_numeric_dtype(x) else ';'.join(set(x.dropna()))) 
+            matches[index] = matches[index].rename(columns = {'Scan':'cluster.index'})
             
     comb = reduce(lambda left,right: pd.merge(left,right,on='cluster.index', how = "outer"), matches)
     if 'FusionSMILES' in comb.columns:
@@ -877,25 +877,25 @@ def _prevent_overwrite(write_path, suffix='_annotated'):
     return write_path
 
 def run_shell_command(script_to_run):
-	os.system(script_to_run)
-	return "DONE"
+    os.system(script_to_run)
+    return "DONE"
 
 # Wraps running in parallel a set of shell scripts
 def run_parallel_shellcommands(input_shell_commands, parallelism_level):
-	return run_parallel_job(run_shell_command, input_shell_commands, parallelism_level)
+    return run_parallel_job(run_shell_command, input_shell_commands, parallelism_level)
 
 # Wraps the parallel job running, simplifying code
 def run_parallel_job(input_function, input_parameters_list, parallelism_level):
-	if parallelism_level == 1:
-		output_results_list = []
-		for input_param in input_parameters_list:
-			result_object = input_function(input_param)
-			output_results_list.append(result_object)
-		return output_results_list
-	else:
-		results = Parallel(n_jobs = parallelism_level)(delayed(input_function)(input_object) for input_object in input_parameters_list)
-		return results
-		
+    if parallelism_level == 1:
+        output_results_list = []
+        for input_param in input_parameters_list:
+            result_object = input_function(input_param)
+            output_results_list.append(result_object)
+        return output_results_list
+    else:
+        results = Parallel(n_jobs = parallelism_level)(delayed(input_function)(input_object) for input_object in input_parameters_list)
+        return results
+        
 def get_classifications(inchifile):
 
     with open(inchifile) as csvfile:
